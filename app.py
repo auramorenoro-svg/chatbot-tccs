@@ -6,6 +6,7 @@ from bot.handler import procesar_mensaje
 from scheduler.reminders import iniciar_scheduler
 from config import Config
 import atexit
+import os
 
 app = Flask(__name__)
 app.secret_key = Config.FLASK_SECRET_KEY
@@ -96,4 +97,4 @@ def avanzar_modulo_admin(paciente_id: int):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000, use_reloader=False)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=False, use_reloader=False)
