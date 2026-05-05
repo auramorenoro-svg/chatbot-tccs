@@ -72,6 +72,23 @@ def ver_pacientes():
         db.close()
 
 
+@app.route("/borrar_paciente/<int:paciente_id>", methods=["POST"])
+def borrar_paciente(paciente_id: int):
+    from database.db import get_db
+    from database.models import Paciente
+    
+    db = get_db()
+    try:
+        paciente = db.query(Paciente).filter(Paciente.id == paciente_id).first()
+        if not paciente:
+            return jsonify({"error": "Paciente no encontrado"}), 404
+        db.delete(paciente)
+        db.commit()
+        return jsonify({"mensaje": "Paciente borrado correctamente"})
+    finally:
+        db.close()
+
+
 @app.route("/avanzar_modulo/<int:paciente_id>", methods=["POST"])
 def avanzar_modulo_admin(paciente_id: int):
     from database.db import get_db
