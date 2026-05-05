@@ -8,6 +8,7 @@ from bot.messages import (
     RESPIRACION_DETALLE
 )
 from bot.faq import buscar_respuesta_faq
+from bot.sheets import obtener_resumen_paciente
 from bot.modules import (
     obtener_descripcion_modulo,
     obtener_tareas_modulo,
@@ -156,6 +157,10 @@ Escribe el tema directamente o haz tu pregunta."""
             paciente.recordatorios_activados = True
             db.commit()
             respuesta = RECORDATORIOS_ACTIVADOS
+            elif any(x in mensaje_lower for x in [
+            "mi diario", "ver diario", "resumen", "como dormi", "cómo dormí"
+        ]):
+            respuesta = obtener_resumen_paciente(nombre)
         
         else:
             respuesta_faq = buscar_respuesta_faq(mensaje_lower)
