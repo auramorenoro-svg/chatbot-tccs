@@ -157,7 +157,8 @@ Escribe el tema directamente o haz tu pregunta."""
             paciente.recordatorios_activados = True
             db.commit()
             respuesta = RECORDATORIOS_ACTIVADOS
-            elif any(x in mensaje_lower for x in [
+
+        elif any(x in mensaje_lower for x in [
             "mi diario", "ver diario", "resumen", "como dormi", "cómo dormí"
         ]):
             respuesta = obtener_resumen_paciente(nombre)
