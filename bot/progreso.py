@@ -3,6 +3,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 import json
 import os
+import traceback
 
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
 
@@ -14,7 +15,7 @@ def get_datos_paciente(nombre: str) -> list:
         client = gspread.authorize(creds)
         sheet_id = os.getenv("GOOGLE_SHEET_ID")
         spreadsheet = client.open_by_key(sheet_id)
-        sheet = spreadsheet.sheet1
+        sheet = spreadsheet.worksheet("Respuestas de formulario 1")
         registros = sheet.get_all_records()
         
         datos = [
@@ -23,7 +24,7 @@ def get_datos_paciente(nombre: str) -> list:
         ]
         return datos
     except Exception as e:
-        print(f"[ERROR PROGRESO] {e}")
+        print(f"[ERROR PROGRESO DETALLE] {traceback.format_exc()}")
         return []
 
 
