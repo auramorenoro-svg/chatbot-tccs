@@ -28,16 +28,34 @@ def get_datos_paciente(nombre: str) -> list:
         return []
 
 
+def parsear_hora(hora_str):
+    from datetime import datetime
+    hora_str = str(hora_str).strip()
+    formatos = [
+        "%I:%M:%S %p",
+        "%I:%M %p",
+        "%H:%M:%S",
+        "%H:%M"
+    ]
+    for fmt in formatos:
+        try:
+            return datetime.strptime(hora_str, fmt)
+        except:
+            continue
+    return None
+
+
 def calcular_eficiencia(hora_cama, hora_levantarse, latencia, tiempo_despierto):
     try:
-        from datetime import datetime
-        fmt = "%I:%M %p"
-        t_cama = datetime.strptime(str(hora_cama).strip(), fmt)
-        t_levanta = datetime.strptime(str(hora_levantarse).strip(), fmt)
+        from datetime import timedelta
+        t_cama = parsear_hora(hora_cama)
+        t_levanta = parsear_hora(hora_levantarse)
+        
+        if not t_cama or not t_levanta:
+            return None
         
         diff = t_levanta - t_cama
         if diff.total_seconds() < 0:
-            from datetime import timedelta
             diff = diff + timedelta(days=1)
         
         tiempo_en_cama = diff.total_seconds() / 60
