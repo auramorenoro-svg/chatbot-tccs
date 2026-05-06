@@ -31,6 +31,7 @@ def get_datos_paciente(nombre: str) -> list:
 def parsear_hora(hora_str):
     from datetime import datetime
     hora_str = str(hora_str).strip()
+    hora_normalizada = hora_str.replace("a.m.", "AM").replace("p.m.", "PM").replace("a. m.", "AM").replace("p. m.", "PM")
     formatos = [
         "%I:%M:%S %p",
         "%I:%M %p",
@@ -39,7 +40,7 @@ def parsear_hora(hora_str):
     ]
     for fmt in formatos:
         try:
-            return datetime.strptime(hora_str, fmt)
+            return datetime.strptime(hora_normalizada, fmt)
         except:
             continue
     return None
