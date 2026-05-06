@@ -113,5 +113,14 @@ def avanzar_modulo_admin(paciente_id: int):
         db.close()
 
 
+@app.route("/progreso/<nombre>", methods=["GET"])
+def ver_progreso(nombre: str):
+    from bot.progreso import get_datos_paciente
+    from bot.template_progreso import generar_html_progreso
+    datos = get_datos_paciente(nombre)
+    html = generar_html_progreso(nombre, datos)
+    return html, 200, {"Content-Type": "text/html"}
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=False, use_reloader=False)
