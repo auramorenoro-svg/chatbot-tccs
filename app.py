@@ -12,7 +12,7 @@ import requests
 app = Flask(__name__)
 app.secret_key = Config.FLASK_SECRET_KEY
 
-# 🔴 CONFIG META (YA LISTO)
+# 🔴 CONFIG META
 VERIFY_TOKEN = "123456"
 ACCESS_TOKEN = "EAAXim2ZAhFH4BRT6ZAqwXEW8Exsxv5d1O1DTZCnFZACiqvOuG5BegkZAoEVsyaK39XkXc2yaV80hqhCGsZAB5aZAZAteOYuXnZA5gL5BBAcjxEhUar2niVYevUjj6M442ZArb7HAJuqSHY6O37uEZB7jqINQj77lbE3yFZBEvYWDy7XPPMtN1GVb7QIGk7aj0ZBkZALC4VfD4IAjQXYazZCaZC00rMbsCX3lbgHuOlBr0E6ZC8SXSjETiisLH2LtzvVDuhxvmeNn3fXMZC2ZCQsz0LgISwW9D2ATgm6kEj5j74sAkOXkgZDZD"
 PHONE_NUMBER_ID = "1066131316591755"
@@ -27,14 +27,19 @@ atexit.register(lambda: scheduler.shutdown())
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
 
-    # 🔴 VERIFICACIÓN META
+    # 🔴 VERIFICACIÓN META (ESTO ERA LO QUE FALTABA BIEN)
     if request.method == "GET":
+        mode = request.args.get("hub.mode")
         token = request.args.get("hub.verify_token")
         challenge = request.args.get("hub.challenge")
 
-        if token == VERIFY_TOKEN:
+        print("[META VERIFY] mode:", mode, "token:", token)
+
+        if mode == "subscribe" and token == VERIFY_TOKEN:
+            print("✅ Webhook verificado correctamente")
             return challenge, 200
         else:
+            print("❌ Error en verificación")
             return "error", 403
 
     # 🔴 MENSAJES
