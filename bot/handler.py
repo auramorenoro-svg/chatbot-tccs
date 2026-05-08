@@ -72,9 +72,9 @@ def procesar_mensaje(numero: str, mensaje: str) -> str:
             db.commit()
             
             respuesta = (
-                f"Mucho gusto, {paciente.nombre}. Estas registrado/a en el programa.\n\n"
-                f"Recibiras recordatorios cada manana a las 8:00 AM para llenar tu diario de sueno "
-                f"y cada noche a las 8:00 PM con consejos de higiene del sueno.\n\n"
+                f"Mucho gusto, {paciente.nombre}. Estás registrado/a en el programa.\n\n"
+                f"Recibirás recordatorios cada mañana a las 8:00 AM para llenar tu diario de sueño "
+                f"y cada noche a las 8:00 PM con consejos de higiene del sueño.\n\n"
                 + MENU_PRINCIPAL
             )
             
@@ -103,20 +103,20 @@ def procesar_mensaje(numero: str, mensaje: str) -> str:
             respuesta = RESPIRACION_DETALLE
         
         elif any(x in mensaje_lower for x in [
-            "mindfulness", "meditacion", "atencion plena"
+            "mindfulness", "meditacion", "meditación", "atencion plena", "atención plena"
         ]):
-            respuesta = """*Mindfulness para el Sueno*
+            respuesta = """*Mindfulness para el Sueño*
 
-El mindfulness o atencion plena te ayuda a reducir la activacion mental antes de dormir.
+El mindfulness o atención plena te ayuda a reducir la activación mental antes de dormir.
 
 Pasos:
-1. Siéntate o acuestate comodamente
-2. Cierra los ojos y lleva tu atencion a tu respiracion
-3. Observa como entra y sale el aire, sin intentar cambiarlo
-4. Cuando tu mente se distraiga, vuelve suavemente a la respiracion
+1. Siéntate o acuéstate cómodamente
+2. Cierra los ojos y lleva tu atención a tu respiración
+3. Observa cómo entra y sale el aire, sin intentar cambiarlo
+4. Cuando tu mente se distraiga, vuelve suavemente a la respiración
 5. Practica durante 5 a 10 minutos
 
-Video guia:
+Video guía:
 https://www.youtube.com/watch?v=QHNJyiMUgnQ"""
         
         elif any(x in mensaje_lower for x in [
@@ -139,14 +139,14 @@ https://www.youtube.com/watch?v=QHNJyiMUgnQ"""
         ]):
             respuesta = """Puedes preguntarme sobre estos temas directamente:
 
-- Respiracion
+- Respiración
 - Mindfulness
-- Control de estimulos
-- Higiene del sueno
+- Control de estímulos
+- Higiene del sueño
 - Pensamientos en la noche
-- Restriccion de sueno
-- Paradoja del sueno
-- Medicamentos para el sueno
+- Restricción de sueño
+- Paradoja del sueño
+- Medicamentos para el sueño
 
 Escribe el tema directamente o haz tu pregunta."""
         
@@ -188,7 +188,7 @@ Escribe el tema directamente o haz tu pregunta."""
     
     except Exception as e:
         print(f"[ERROR] Error procesando mensaje de {numero}: {e}")
-        return "Ocurrio un error. Por favor intenta de nuevo o escribe 'menu'."
+        return "Ocurrió un error. Por favor intenta de nuevo o escribe 'menu'."
     
     finally:
         db.close()
