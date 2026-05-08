@@ -11,6 +11,9 @@ import os
 app = Flask(__name__)
 app.secret_key = Config.FLASK_SECRET_KEY
 
+# 🔴 TOKEN PARA META (igual que en Meta)
+VERIFY_TOKEN = "123456"
+
 with app.app_context():
     init_db()
 
@@ -18,25 +21,79 @@ scheduler = iniciar_scheduler()
 atexit.register(lambda: scheduler.shutdown())
 
 
-@app.route("/webhook", methods=["POST"])
+# ============================
+# 🔴 WEBHOOK UNIFICADO (META + TWILIO)
+# ============================
+@app.route("/webhook", methods=["GET", "POST"])
 def webhook():
-    numero_remitente = request.form.get("From", "")
-    mensaje_recibido = request.form.get("Body", "").strip()
-    
-    if not numero_remitente or not mensaje_recibido:
-        return "", 204
-    
-    print(f"[MENSAJE RECIBIDO] De: {numero_remitente} | Texto: {mensaje_recibido}")
-    
-    respuesta_texto = procesar_mensaje(numero_remitente, mensaje_recibido)
-    
-    respuesta_twiml = MessagingResponse()
-    respuesta_twiml.message(respuesta_texto)
-    
-    print(f"[RESPUESTA ENVIADA] A: {numero_remitente} | Texto: {respuesta_texto[:80]}...")
-    
-    return str(respuesta_twiml), 200, {"Content-Type": "text/xml"}
 
+    # 🔴 VERIFICACIÓN DE META (GET)
+    if request.method == "GET":
+        token = request.args.get("hub.verify_token")
+        challenge = request.args.get("hub.challenge")
+
+        if token == VERIFY_TOKEN:
+            return challenge, 200
+        else:
+            return "error", 403
+
+    # 🔴 MENSAJES ENTRANTES (POST)
+    if request.method == "POST":
+
+        # ============================
+        # 🟢 CASO TWILIO (lo que ya tenías)
+        # ============================
+        if request.form.get("From"):
+            numero_remitente = request.form.get("From", "")
+            mensaje_recibido = request.form.get("Body", "").strip()
+
+            if not numero_remitente or not mensaje_recibido:
+                return "", 204
+
+            print(f"[TWILIO] De: {numero_remitente} | Texto: {mensaje_recibido}")
+
+            respuesta_texto = procesar_mensaje(numero_remitente, mensaje_recibido)
+
+            respuesta_twiml = MessagingResponse()
+            respuesta_twiml.message(respuesta_texto)
+
+            print(f"[RESPUESTA TWILIO] {respuesta_texto[:80]}")
+
+            return str(respuesta_twiml), 200, {"Content-Type": "text/xml"}
+
+        # ============================
+        # 🔵 CASO META (WhatsApp Cloud API)
+        # ============================
+        data = request.get_json()
+
+        print("[META RAW]:", data)
+
+        try:
+            entry = data.get("entry", [])[0]
+            changes = entry.get("changes", [])[0]
+            value = changes.get("value", {})
+            messages = value.get("messages")
+
+            if messages:
+                mensaje = messages[0]
+                numero_remitente = mensaje["from"]
+                texto = mensaje.get("text", {}).get("body", "")
+
+                print(f"[META] De: {numero_remitente} | Texto: {texto}")
+
+                respuesta = procesar_mensaje(numero_remitente, texto)
+
+                print(f"[RESPUESTA META] {respuesta}")
+
+        except Exception as e:
+            print("[ERROR META]:", e)
+
+        return "ok", 200
+
+
+# ============================
+# 🔴 RUTAS EXISTENTES (NO SE TOCAN)
+# ============================
 
 @app.route("/", methods=["GET"])
 def salud():
