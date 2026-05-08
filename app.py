@@ -7,12 +7,15 @@ from scheduler.reminders import iniciar_scheduler
 from config import Config
 import atexit
 import os
+import requests
 
 app = Flask(__name__)
 app.secret_key = Config.FLASK_SECRET_KEY
 
-# 🔴 TOKEN PARA META (igual que en Meta)
+# 🔴 CONFIG META (YA LISTO)
 VERIFY_TOKEN = "123456"
+ACCESS_TOKEN = "EAAXim2ZAhFH4BRT6ZAqwXEW8Exsxv5d1O1DTZCnFZACiqvOuG5BegkZAoEVsyaK39XkXc2yaV80hqhCGsZAB5aZAZAteOYuXnZA5gL5BBAcjxEhUar2niVYevUjj6M442ZArb7HAJuqSHY6O37uEZB7jqINQj77lbE3yFZBEvYWDy7XPPMtN1GVb7QIGk7aj0ZBkZALC4VfD4IAjQXYazZCaZC00rMbsCX3lbgHuOlBr0E6ZC8SXSjETiisLH2LtzvVDuhxvmeNn3fXMZC2ZCQsz0LgISwW9D2ATgm6kEj5j74sAkOXkgZDZD"
+PHONE_NUMBER_ID = "1066131316591755"
 
 with app.app_context():
     init_db()
@@ -21,13 +24,10 @@ scheduler = iniciar_scheduler()
 atexit.register(lambda: scheduler.shutdown())
 
 
-# ============================
-# 🔴 WEBHOOK UNIFICADO (META + TWILIO)
-# ============================
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
 
-    # 🔴 VERIFICACIÓN DE META (GET)
+    # 🔴 VERIFICACIÓN META
     if request.method == "GET":
         token = request.args.get("hub.verify_token")
         challenge = request.args.get("hub.challenge")
@@ -37,12 +37,10 @@ def webhook():
         else:
             return "error", 403
 
-    # 🔴 MENSAJES ENTRANTES (POST)
+    # 🔴 MENSAJES
     if request.method == "POST":
 
-        # ============================
-        # 🟢 CASO TWILIO (lo que ya tenías)
-        # ============================
+        # 🟢 TWILIO
         if request.form.get("From"):
             numero_remitente = request.form.get("From", "")
             mensaje_recibido = request.form.get("Body", "").strip()
@@ -50,22 +48,17 @@ def webhook():
             if not numero_remitente or not mensaje_recibido:
                 return "", 204
 
-            print(f"[TWILIO] De: {numero_remitente} | Texto: {mensaje_recibido}")
+            print(f"[TWILIO] {numero_remitente}: {mensaje_recibido}")
 
             respuesta_texto = procesar_mensaje(numero_remitente, mensaje_recibido)
 
             respuesta_twiml = MessagingResponse()
             respuesta_twiml.message(respuesta_texto)
 
-            print(f"[RESPUESTA TWILIO] {respuesta_texto[:80]}")
-
             return str(respuesta_twiml), 200, {"Content-Type": "text/xml"}
 
-        # ============================
-        # 🔵 CASO META (WhatsApp Cloud API)
-        # ============================
+        # 🔵 META
         data = request.get_json()
-
         print("[META RAW]:", data)
 
         try:
@@ -79,21 +72,37 @@ def webhook():
                 numero_remitente = mensaje["from"]
                 texto = mensaje.get("text", {}).get("body", "")
 
-                print(f"[META] De: {numero_remitente} | Texto: {texto}")
+                print(f"[META] {numero_remitente}: {texto}")
 
                 respuesta = procesar_mensaje(numero_remitente, texto)
 
-                print(f"[RESPUESTA META] {respuesta}")
+                print(f"[RESPUESTA BOT] {respuesta}")
+
+                url = f"https://graph.facebook.com/v18.0/{PHONE_NUMBER_ID}/messages"
+
+                headers = {
+                    "Authorization": f"Bearer {ACCESS_TOKEN}",
+                    "Content-Type": "application/json"
+                }
+
+                payload = {
+                    "messaging_product": "whatsapp",
+                    "to": numero_remitente,
+                    "type": "text",
+                    "text": {
+                        "body": respuesta
+                    }
+                }
+
+                r = requests.post(url, headers=headers, json=payload)
+
+                print("[META SEND STATUS]:", r.status_code, r.text)
 
         except Exception as e:
             print("[ERROR META]:", e)
 
         return "ok", 200
 
-
-# ============================
-# 🔴 RUTAS EXISTENTES (NO SE TOCAN)
-# ============================
 
 @app.route("/", methods=["GET"])
 def salud():
