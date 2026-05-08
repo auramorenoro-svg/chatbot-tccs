@@ -37,7 +37,7 @@ def obtener_o_crear_paciente(db, numero: str) -> Paciente:
     if not paciente:
         paciente = Paciente(
             numero_whatsapp=numero,
-            sesion_activa="esperando_nombre"
+            sesion_activa="nuevo"
         )
         db.add(paciente)
         db.commit()
@@ -58,6 +58,14 @@ def procesar_mensaje(numero: str, mensaje: str) -> str:
         registrar_mensaje(db, numero, "entrada", mensaje_limpio)
         paciente = obtener_o_crear_paciente(db, numero)
         
+        # Primer contacto — mostrar bienvenida y pedir nombre
+        if paciente.sesion_activa == "nuevo":
+            paciente.sesion_activa = "esperando_nombre"
+            db.commit()
+            registrar_mensaje(db, numero, "salida", BIENVENIDA)
+            return BIENVENIDA
+
+        # Ya recibimos el primer mensaje, ahora guardar el nombre
         if paciente.sesion_activa == "esperando_nombre":
             paciente.nombre = mensaje_limpio.title()
             paciente.sesion_activa = "activo"
