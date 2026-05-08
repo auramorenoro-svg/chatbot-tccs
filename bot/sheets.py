@@ -13,7 +13,7 @@ def get_sheet():
     client = gspread.authorize(creds)
     sheet_id = os.getenv("GOOGLE_SHEET_ID")
     spreadsheet = client.open_by_key(sheet_id)
-    return spreadsheet.sheet1
+    return spreadsheet.worksheet("Respuestas de formulario 1")
 
 
 def obtener_resumen_paciente(nombre: str) -> str:
