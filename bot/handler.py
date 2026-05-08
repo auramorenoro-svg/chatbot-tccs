@@ -5,7 +5,7 @@ from bot.messages import (
     BIENVENIDA, BIENVENIDA_REGISTRADO, LINK_DIARIO,
     TECNICAS_RELAJACION, MENU_PRINCIPAL, NO_ENTENDIDO,
     RECORDATORIOS_DESACTIVADOS, RECORDATORIOS_ACTIVADOS,
-    RESPIRACION_DETALLE
+    RESPIRACION_DETALLE, LINK_PROGRESO
 )
 from bot.faq import buscar_respuesta_faq
 from bot.sheets import obtener_resumen_paciente
@@ -162,6 +162,11 @@ Escribe el tema directamente o haz tu pregunta."""
             "mi diario", "ver diario", "resumen", "como dormi", "cómo dormí"
         ]):
             respuesta = obtener_resumen_paciente(nombre)
+
+        elif any(x in mensaje_lower for x in [
+            "progreso", "mi progreso", "ver progreso", "tabla", "7"
+        ]):
+            respuesta = LINK_PROGRESO(nombre)
         
         else:
             respuesta_faq = buscar_respuesta_faq(mensaje_lower)
