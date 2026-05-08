@@ -19,6 +19,7 @@ Estoy aqui para ayudarte. Puedes escribir una de estas opciones o hacerme una pr
 4. Preguntas frecuentes
 5. Desactivar recordatorios
 6. Activar recordatorios
+7. Ver mi progreso de sueno
 
 O escribe tu pregunta directamente."""
 
@@ -38,11 +39,11 @@ RECORDATORIO_NOCHE = lambda nombre: f"""Buenas noches, {nombre}.
 En unos momentos te prepararas para dormir. Aqui tienes un recordatorio de tus habitos de higiene del sueno para esta noche:
 
 - Apaga pantallas 30 min antes de acostarte
-- Mantén tu cuarto fresco (18-20 grados)
+- Manten tu cuarto fresco (18-20 grados)
 - Si no tienes sueno, no te vayas a la cama todavia
 - Haz tu ejercicio de respiracion (escribe "respiracion" si quieres el recordatorio)
 
-Buenas noches. Mañana te esperare para tu diario."""
+Buenas noches. Manana te esperare para tu diario."""
 
 LINK_DIARIO = lambda url: f"""Aqui esta el enlace para llenar tu Diario de Sueno de hoy:
 
@@ -51,6 +52,12 @@ LINK_DIARIO = lambda url: f"""Aqui esta el enlace para llenar tu Diario de Sueno
 Recuerda llenarlo cada manana, registrando como dormiste la noche anterior.
 
 Los datos que registras son fundamentales para que tu terapeuta pueda seguir tu progreso."""
+
+LINK_PROGRESO = lambda nombre: f"""Aqui esta tu pagina de progreso de sueno:
+
+https://web-production-e55ce9.up.railway.app/progreso/{nombre}
+
+Podras ver tu eficiencia de sueno y tu registro diario. Se actualiza cada vez que llenas el diario."""
 
 TECNICAS_RELAJACION = """Aqui tienes las principales tecnicas de relajacion para antes de dormir:
 
@@ -72,7 +79,7 @@ Video guia:
 https://www.youtube.com/watch?v=IjIw0ZUvUcA
 
 *3. Mindfulness*
-- Siéntate comodamente y cierra los ojos
+- Sientate comodamente y cierra los ojos
 - Lleva tu atencion a tu respiracion, sin intentar cambiarla
 - Cuando tu mente se distraiga, vuelve suavemente a la respiracion
 - Practica durante 5 a 10 minutos
@@ -87,7 +94,7 @@ RESPIRACION_DETALLE = """*Tecnicas de Respiracion - Instrucciones completas*
 La respiracion controlada es una herramienta muy eficaz para reducir la ansiedad antes de dormir.
 
 Pasos:
-1. Siéntate o acuestate comodamente
+1. Sientate o acuestate comodamente
 2. Cierra los ojos y relaja los hombros
 3. Inhala lentamente por la nariz contando 4 segundos
 4. Manten el aire contando 4 segundos
@@ -107,6 +114,7 @@ MENU_PRINCIPAL = """Puedo ayudarte con:
 4. Preguntas frecuentes
 5. Desactivar recordatorios
 6. Activar recordatorios
+7. Ver mi progreso de sueno
 
 Escribe el numero o tu pregunta directamente."""
 
@@ -116,9 +124,10 @@ NO_ENTENDIDO = """No estoy seguro de entender tu pregunta. Puedes escribir:
 - "diario" para el enlace del diario de sueno
 - "relajacion" para las tecnicas
 - "modulo" para ver tu modulo actual
+- "progreso" para ver tu progreso de sueno
 - "preguntas" para preguntas frecuentes
 
-O escribe tu duda y haré lo posible por ayudarte."""
+O escribe tu duda y hare lo posible por ayudarte."""
 
 RECORDATORIOS_DESACTIVADOS = """De acuerdo. Ya no recibiras recordatorios automaticos.
 
