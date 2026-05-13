@@ -14,8 +14,8 @@ app.secret_key = Config.FLASK_SECRET_KEY
 
 # CONFIG META
 VERIFY_TOKEN = "123456"
-ACCESS_TOKEN = "EAAXim2ZAhFH4BRT6ZAqwXEW8Exsxv5d1O1DTZCnFZACiqvOuG5BegkZAoEVsyaK39XkXc2yaV80hqhCGsZAB5aZAZAteOYuXnZA5gL5BBAcjxEhUar2niVYevUjj6M442ZArb7HAJuqSHY6O37uEZB7jqINQj77lbE3yFZBEvYWDy7XPPMtN1GVb7QIGk7aj0ZBkZALC4VfD4IAjQXYazZCaZC00rMbsCX3lbgHuOlBr0E6ZC8SXSjETiisLH2LtzvVDuhxvmeNn3fXMZC2ZCQsz0LgISwW9D2ATgm6kEj5j74sAkOXkgZDZD"
-PHONE_NUMBER_ID = "1066131316591755"
+ACCESS_TOKEN = "EAAXim2ZAhFH4BRZAnE2hl5eHRh7uotdvdmjgwIRw8jVJIT2Sf7F2o4SEkZBMAxHqEJFisRiKZC82RIHXxinsc1XP1Kuy52pgH1iIjqX0sjYhkQM7yT5ims8cjtlkhYLTJTGC2SZBasg6jpZCQZChFZCvn60Fx3JXgvEwB2JaZCwPZAQZBKHbZCahBn2ZCDSDEYKeQfiQx3LlJd2XGObxWEMhjsZCNg2euKdj5Fi9C7NKZA3ZBSC3L9inA1vA75rhDInsH4RMPnvBXCBAE62v3hWCNn8mZATMsmYnxHb1uv1zhb3nwxAZDZD"
+PHONE_NUMBER_ID = "1115915154941968"
 
 
 with app.app_context():
@@ -27,7 +27,6 @@ atexit.register(lambda: scheduler.shutdown())
 
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
-    # Verificación de Meta
     if request.method == "GET":
         mode = request.args.get("hub.mode")
         token = request.args.get("hub.verify_token")
@@ -42,10 +41,8 @@ def webhook():
         print("[META VERIFY] Falló la verificación.")
         return "error", 403
 
-    # Mensajes entrantes
     if request.method == "POST":
 
-        # Caso Twilio
         if request.form.get("From"):
             numero_remitente = request.form.get("From", "")
             mensaje_recibido = request.form.get("Body", "").strip()
@@ -62,7 +59,6 @@ def webhook():
 
             return str(respuesta_twiml), 200, {"Content-Type": "text/xml"}
 
-        # Caso Meta
         data = request.get_json(silent=True)
         print("[META RAW]:", data)
 
